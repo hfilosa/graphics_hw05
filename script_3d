@@ -9,7 +9,7 @@ yrotate
 translate
 150 200 0
 apply
-display
+#display
 #clear the edge matrix, test the sphere
 clear
 sphere

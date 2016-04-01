@@ -91,7 +91,7 @@ void add_sphere( struct matrix * points,
 
   int latStop, longStop, latStart, longStart;
   latStart = 0;
-  latStop = num_steps;
+  latStop =12;// num_steps;
   longStart = 0;
   longStop = num_steps;
   
@@ -100,7 +100,8 @@ void add_sphere( struct matrix * points,
       
       index = lat * (num_steps+1) + longt;
       add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1],  temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps]);
-      add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps], temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1]);
+      if (index%(num_steps+1) != 0)
+	add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+num_steps],temp->m[1][index+num_steps],temp->m[2][index+num_steps], temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps]);
     }//end points only
   }
   free_matrix(temp);
