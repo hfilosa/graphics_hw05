@@ -26,4 +26,4 @@ clean:
 
 run:
 	make
-	./main script_3d
+	./main script_neat

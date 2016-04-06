@@ -51,7 +51,7 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
   int n;
   for (n=0;n<polygons->lastcol;n+=3){
     int forward = is_forward_facing(polygons->m[0][n],polygons->m[1][n],polygons->m[2][n], polygons->m[0][n+1],polygons->m[1][n+1],polygons->m[2][n+1], polygons->m[0][n+2],polygons->m[1][n+2],polygons->m[2][n+2]);
-    if (!forward){
+    if (forward){
       draw_line(polygons->m[0][n],polygons->m[1][n],polygons->m[0][n+1],polygons->m[1][n+1],s,c);
       draw_line(polygons->m[0][n],polygons->m[1][n],polygons->m[0][n+2],polygons->m[1][n+2],s,c);
       draw_line(polygons->m[0][n+1],polygons->m[1][n+1],polygons->m[0][n+2],polygons->m[1][n+2],s,c);
@@ -95,17 +95,36 @@ void add_sphere( struct matrix * points,
   int latStop, longStop, latStart, longStart;
   latStart = 0;
   //It seems to work if I do half as many num_steps ¯\_(ツ)_/¯
-  latStop =num_steps/2;
+  latStop = 20;//num_steps/2;
   longStart = 0;
-  longStop = num_steps;
+  longStop =10; //num_steps;
   
   for ( lat = latStart; lat < latStop; lat++ ) {
     for ( longt = longStart; longt < longStop; longt++ ) {
       index = lat *num_steps + longt;
-      add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1],  temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps]);
-      if (longt != 0 || longt != longStop-1)
-	add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index], temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps], temp->m[0][index+num_steps],temp->m[1][index+num_steps],temp->m[2][index+num_steps]);
-    }//end points only
+      if (lat!=num_steps-1){
+	//All points except last one before bottom
+	if (longt != longStop-1)
+	  add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1],  temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps]);
+	//Special case for bottom triangles
+	if (longt == longStop)
+	 add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1],  temp->m[0][index+num_steps],temp->m[1][index+num_steps],temp->m[2][index+num_steps]);
+	//Add in second triangle
+	if (longt != 0 || longt != longStop-1)
+	  add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index], temp->m[0][index+1+num_steps],temp->m[1][index+1+num_steps],temp->m[2][index+1+num_steps], temp->m[0][index+num_steps],temp->m[1][index+num_steps],temp->m[2][index+num_steps]);
+      }
+      //Do the last half slice
+      else{
+	//All points except last one before bottom
+	if (longt != longStop-1)
+	add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1],  temp->m[0][(index+1)%num_steps],temp->m[1][(index+1)%num_steps],temp->m[2][(index+1)%num_steps]);
+	//Special case for bottom triangles
+	if (longt == longStop)
+	  add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index],  temp->m[0][index+1],temp->m[1][index+1],temp->m[2][index+1],  temp->m[0][index%num_steps],temp->m[1][index%num_steps],temp->m[2][index%num_steps]);
+	if (longt != 0 || longt != longStop-1)
+	  add_polygon(points,temp->m[0][index],temp->m[1][index],temp->m[2][index], temp->m[0][(index+1)%num_steps],temp->m[1][(index+1)%num_steps],temp->m[2][(index+1)%num_steps], temp->m[0][index%num_steps],temp->m[1][index%num_steps],temp->m[2][index%num_steps]);
+      }
+    }
   }
   free_matrix(temp);
 }

@@ -430,6 +430,7 @@ int is_forward_facing(double x0, double y0, double z0, double x1, double y1, dou
   free_matrix(view_vector);
   double ans=dot->m[2][0];
   free_matrix(dot);
+  //Did this stupid return method because of C issues I ran into with returning a double
   if (ans<=0)
     return 1;
   return 0;

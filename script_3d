@@ -9,7 +9,7 @@ yrotate
 translate
 150 200 0
 apply
-#display
+display
 #clear the edge matrix, test the sphere
 clear
 sphere
@@ -49,6 +49,8 @@ translate
 250 250 0
 apply
 display
+save
+1.png
 #clear the edge matrix, test torus
 clear
 torus
