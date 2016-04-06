@@ -402,33 +402,35 @@ struct matrix * make_vector(double x0, double y0, double z0, double x1, double y
 //<Ay*Bz - Az*By, Az*Bx - Ax*Bz, Ax*By - Ay*Bx>
 struct matrix * cross_product(struct matrix *a, struct matrix *b){
   struct matrix *v = new_matrix(3,1);
-  v->m[0][0]=a->m[1][0]*b->m[2][0] - a->m[2][0]*b->m[1][0];
-  v->m[1][0]=a->m[2][0]*b->m[0][0] - a->m[0][0]*b->m[2][0];
-  v->m[2][0]=a->m[0][0]*b->m[1][0] - a->m[1][0]*b->m[0][0];
+  v->m[0][0]=(a->m[1][0])*(b->m[2][0]) - (a->m[2][0])*(b->m[1][0]);
+  v->m[1][0]=(a->m[2][0])*(b->m[0][0]) - (a->m[0][0])*(b->m[2][0]);
+  v->m[2][0]=(a->m[0][0])*(b->m[1][0]) - (a->m[1][0])*(b->m[0][0]);
   return v;
 }
 
-//Returns the dot product of a dot b
+//Returns the dot product of a "dot" b
 struct matrix * dot_product(struct matrix *a, struct matrix *b){
   struct matrix *v=new_matrix(3,1);
-  v->m[0][0]=a->m[0][0]*b->m[0][0];
-  v->m[1][0]=a->m[1][0]*b->m[1][0];
-  v->m[2][0]=a->m[2][0]*b->m[2][0];
+  v->m[0][0]=(a->m[0][0])*(b->m[0][0]);
+  v->m[1][0]=(a->m[1][0])*(b->m[1][0]);
+  v->m[2][0]=(a->m[2][0])*(b->m[2][0]);
   return v;
 }
 
-//Returns value>0 if surface is forward facing. Less than 0 if back facing
-double is_forward_facing(double x0, double y0, double z0, double x1, double y1, double z1, double x2, double y2, double z2){
+//Returns 1 if surface is forward facing. Returns 0 if back facing
+int is_forward_facing(double x0, double y0, double z0, double x1, double y1, double z1, double x2, double y2, double z2){
   struct matrix *vector_a = make_vector(x0,y0,z0,x1,y1,z1);
   struct matrix *vector_b = make_vector(x0,y0,z0,x2,y2,z2);
   struct matrix *surface_normal=cross_product(vector_a,vector_b);
   free_matrix(vector_a);
   free_matrix(vector_b);
-  struct matrix *view_vector = make_vector(0,0,-1,0,0,0);
+  struct matrix *view_vector = make_vector(0,0,1,0,0,0);
   struct matrix *dot = dot_product(surface_normal,view_vector);
   free_matrix(surface_normal);
   free_matrix(view_vector);
   double ans=dot->m[2][0];
   free_matrix(dot);
-  return ans;
+  if (ans<=0)
+    return 1;
+  return 0;
 }
