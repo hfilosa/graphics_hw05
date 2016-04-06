@@ -50,9 +50,11 @@ jdyrlandweaver
 void draw_polygons( struct matrix *polygons, screen s, color c ) {
   int n;
   for (n=0;n<polygons->lastcol;n+=3){
-    draw_line(polygons->m[0][n],polygons->m[1][n],polygons->m[0][n+1],polygons->m[1][n+1],s,c);
-    draw_line(polygons->m[0][n],polygons->m[1][n],polygons->m[0][n+2],polygons->m[1][n+2],s,c);
-    draw_line(polygons->m[0][n+1],polygons->m[1][n+1],polygons->m[0][n+2],polygons->m[1][n+2],s,c);
+    if (is_forward_facing(polygons->m[0][n],polygons->m[1][n],polygons->m[2][n], polygons->m[0][n+1],polygons->m[1][n+1],polygons->m[2][n+1], polygons->m[0][n+2],polygons->m[1][n+2],polygons->m[2][n+2])>0){
+      draw_line(polygons->m[0][n],polygons->m[1][n],polygons->m[0][n+1],polygons->m[1][n+1],s,c);
+      draw_line(polygons->m[0][n],polygons->m[1][n],polygons->m[0][n+2],polygons->m[1][n+2],s,c);
+      draw_line(polygons->m[0][n+1],polygons->m[1][n+1],polygons->m[0][n+2],polygons->m[1][n+2],s,c);
+    }
   }
 }
 
